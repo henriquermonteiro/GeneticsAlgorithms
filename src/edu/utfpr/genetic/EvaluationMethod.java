@@ -9,6 +9,12 @@ package edu.utfpr.genetic;
  *
  * @author henrique
  */
-public class Engine {
+public abstract class EvaluationMethod {
+    protected Session session;
+
+    public EvaluationMethod(Session session) {
+        this.session = session;
+    }
     
+    public abstract boolean hasNextIteration();
 }

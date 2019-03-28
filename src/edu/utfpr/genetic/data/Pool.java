@@ -5,6 +5,7 @@
  */
 package edu.utfpr.genetic.data;
 
+import edu.utfpr.genetic.Session;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 

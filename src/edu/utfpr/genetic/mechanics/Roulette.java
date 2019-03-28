@@ -78,4 +78,16 @@ public class Roulette {
         
         return childs;
     }
+    
+    public byte getNextByte(){
+        return (byte) rng.nextInt(256);
+    }
+    
+    public int getNextInt(){
+        return (int) rng.nextInt();
+    }
+    
+    public int getNextInt(int range){
+        return (int) rng.nextInt(range);
+    }
 }

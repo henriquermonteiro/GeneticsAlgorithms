@@ -5,14 +5,16 @@
  */
 package edu.utfpr.genetic.data;
 
+import edu.utfpr.genetic.Session;
+
 /**
  *
  * @author henrique
  */
-public abstract class Chromosome<T> implements Comparable<T>{
-    private T chromosome;
-    private Double fitness;
-    private Session session;
+public abstract class Chromosome<T> implements Comparable<Chromosome<T>>{
+    protected T chromosome;
+    protected Double fitness;
+    protected final Session session;
     
     public Chromosome(Session session){
         this.session = session;
@@ -43,9 +45,13 @@ public abstract class Chromosome<T> implements Comparable<T>{
     
     protected abstract void calculateFitness();
     
+    public abstract boolean evaluateValidity();
+    
     protected abstract T generateRandomGenes();
     
     public abstract void applyMutation(int gene);
     
-    public abstract Chromosome generateChild(Chromosome otherParent, int start, int end);
+    public abstract Chromosome<T> generateChild(Chromosome<T> otherParent, int start, int end);
+    
+    public abstract String getIdentifier();
 }
