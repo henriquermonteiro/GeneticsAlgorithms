@@ -21,8 +21,12 @@ public class Session<T> {
     private ArrayList<IterationDigest<T>> digest;
     private EvaluationMethod evaluationM;
     private final long stopConditionParameter;
+    private final char infactibilityTreatment;
+    private boolean continueFlag = true;
+    private ArrayList<SessionListener> sessionListeners;
 
-    public Session(long seed, double mutationChance, double crossOverChance, int poolSize, int childGeneration, Class ChromossomeClass, char evaluationMethod, long stopConditionParameter) throws Exception{
+    public Session(long seed, double mutationChance, double crossOverChance, int poolSize, int childGeneration, Class ChromossomeClass, char evaluationMethod, long stopConditionParameter, char infactibilityTreatment) throws Exception{
+        this.infactibilityTreatment = infactibilityTreatment;
         this.roulette = new Roulette(seed, mutationChance, crossOverChance);
         this.pool = new Pool(this, poolSize, childGeneration, ChromossomeClass);
         switch(evaluationMethod){
@@ -34,6 +38,20 @@ public class Session<T> {
                 break;
         }
         this.stopConditionParameter = stopConditionParameter;
+        digest = new ArrayList<>();
+        sessionListeners = new ArrayList<>();
+    }
+    
+    public void addSessionListner(SessionListener listener){
+        sessionListeners.add(listener);
+    }
+    
+    public void removeSessionListner(SessionListener listener){
+        sessionListeners.remove(listener);
+    }
+    
+    public void stopExecution(){
+        continueFlag = false;
     }
     
     public Pool getPool() {
@@ -51,8 +69,17 @@ public class Session<T> {
     public void execute(){
         do{
             pool.processGeneration();
-            digest.add(new IterationDigest<>(pool));
-        }while(evaluationM.hasNextIteration());
+            IterationDigest dig = new IterationDigest<>(pool);
+            digest.add(dig);
+            
+            for(SessionListener sL: sessionListeners){
+                sL.receiveLogInfo(dig.getLogLines());
+            }
+        }while(evaluationM.hasNextIteration() && continueFlag);
+        
+        for(SessionListener sL: sessionListeners){
+            sL.receiveStopStatus('C');
+        }
     }
 
     public ArrayList<IterationDigest<T>> getDigest() {
@@ -65,5 +92,9 @@ public class Session<T> {
 
     public Long getFitnessCalc() {
         return fitnessCalc;
+    }
+
+    public char getInfactibilityTreatment() {
+        return infactibilityTreatment;
     }
 }

@@ -17,15 +17,14 @@ public abstract class Chromosome<T> implements Comparable<Chromosome<T>>{
     protected final Session session;
     
     public Chromosome(Session session){
-        this.session = session;
-        this.chromosome = generateRandomGenes();
-        updateFitness();
+        this(null, session, true);
     }
     
-    public Chromosome(T chromosome, Session session){
+    public Chromosome(T chromosome, Session session, boolean calculateFitness){
         this.session = session;
-        this.chromosome = chromosome;
-        updateFitness();
+        this.chromosome = (chromosome == null ? generateRandomGenes() : chromosome);
+        if(calculateFitness)
+            updateFitness();
     }
     
     public T getChromosome(){
@@ -54,4 +53,6 @@ public abstract class Chromosome<T> implements Comparable<Chromosome<T>>{
     public abstract Chromosome<T> generateChild(Chromosome<T> otherParent, int start, int end);
     
     public abstract String getIdentifier();
+
+    public abstract void repair();
 }

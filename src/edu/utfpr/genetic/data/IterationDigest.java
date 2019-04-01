@@ -14,17 +14,21 @@ import java.util.GregorianCalendar;
  */
 public class IterationDigest<T> {
     private final T chromossome;
+    private final String chromossomeString;
     private final Double bestFitness;
     private final Double averageFitness;
     private final Double standardDeviation;
     private final long generationID;
     private final Calendar logTime;
+    
+    private boolean debug = true;
 
     public IterationDigest(Pool pool) {
         logTime = GregorianCalendar.getInstance();
         generationID = pool.getGeneration();
         
         Chromosome best = pool.getPool()[0];
+        chromossomeString = best.toString();
         
         double avgFitness = 0.0;
         for(Chromosome ind : pool.getPool()){
@@ -45,6 +49,11 @@ public class IterationDigest<T> {
         }
         
         standardDeviation = stdDeviation / pool.getPool().length;
+        
+        if(debug){
+            System.out.print("Gen: " + generationID);
+            System.out.println(" best fitness: " + bestFitness);
+        }
     }
 
     public T getChromossome() {
@@ -69,5 +78,13 @@ public class IterationDigest<T> {
 
     public Calendar getLogTime() {
         return logTime;
+    }
+    
+    public String[] getLogLines() {
+        return new String[]{
+            "Generation ended at: " + logTime.getTime().toString(), 
+            "Generation: " + generationID + " Best-Fitness: " + bestFitness + " Average-Fitness: " + averageFitness + " Standard-Deviation: " + standardDeviation,
+            "Chromossome: " + chromossomeString
+        };
     }
 }

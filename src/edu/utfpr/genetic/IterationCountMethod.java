@@ -17,7 +17,7 @@ public class IterationCountMethod extends EvaluationMethod{
 
     @Override
     public boolean hasNextIteration() {
-        return this.session.getPool().getGeneration() >= this.session.getStopParameter();
+        return this.session.getPool().getGeneration() < this.session.getStopParameter();
     }
     
 }

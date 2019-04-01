@@ -31,7 +31,7 @@ public class Roulette {
         for(Chromosome ind : pool){
             agregated += ind.getFitness() / totalFitness;
             
-            if(agregated > 1){
+            if(agregated > 1.001){
                 break;
             }
             
@@ -72,8 +72,8 @@ public class Roulette {
                 pos2 ^= pos1;
             }
 
-            childs[0] = parent1.generateChild(parent2, 0, 0);
-            childs[1] = parent2.generateChild(parent1, 0, 0);
+            childs[0] = parent1.generateChild(parent2, pos1, pos2);
+            childs[1] = parent2.generateChild(parent1, pos1, pos2);
         }
         
         return childs;

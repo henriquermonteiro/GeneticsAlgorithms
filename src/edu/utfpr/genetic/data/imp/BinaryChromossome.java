@@ -22,15 +22,18 @@ public abstract class BinaryChromossome extends Chromosome<Byte[]>{
         super(session);
     }
 
-    public BinaryChromossome(Byte[] chromosome, Session session) {
-        super(chromosome, session);
+    public BinaryChromossome(Byte[] chromosome, Session session, boolean calculateFitness) {
+        super(chromosome, session, calculateFitness);
     }
 
     @Override
     protected Byte[] generateRandomGenes() {
-        int shift = getGeneCount() % 8;
-        byte mask = (byte) (0xff << shift);
-        mask = (byte)(mask >>> shift);
+        int shift = (getGeneCount() - 1) % 8;
+        byte mask = (byte) (0x01);
+        
+        for(;shift > 0; shift --){
+            mask = (byte)((mask << 1) | 0x01);
+        }
         
         Roulette roulette = this.session.getRoulette();
         
@@ -49,19 +52,19 @@ public abstract class BinaryChromossome extends Chromosome<Byte[]>{
             return;
         }
         
-        int pos = (int)(gene / 8);
-        int shift = gene % 8;
+        int pos = (int)((gene + (7 - (getGeneCount() % 8))) / 8);
+        int shift = (gene + (8 - (getGeneCount() % 8))) % 8;
         
         byte mask = 0x01;
         
-        mask = (byte) (mask << gene % shift);
+        mask = (byte) (mask << (7 - shift));
         
         this.chromosome[pos] = (byte) (this.chromosome[pos] ^ mask);
     }
 
     @Override
     public Chromosome<Byte[]> generateChild(Chromosome<Byte[]> otherParent, int start, int end) {
-        if(start < end || end > getGeneCount() + 1 || start < 0){
+        if(start > end || end > getGeneCount() || start < 0){
             return null;
         }
         
@@ -98,7 +101,7 @@ public abstract class BinaryChromossome extends Chromosome<Byte[]>{
         }
         
         try {
-            return this.getClass().getConstructor(Session.class, Byte[].class).newInstance(session, child);
+            return this.getClass().getConstructor(Byte[].class, Session.class, boolean.class).newInstance(child, session, false);
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             Logger.getLogger(BinaryChromossome.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -109,7 +112,24 @@ public abstract class BinaryChromossome extends Chromosome<Byte[]>{
     public int compareTo(Chromosome<Byte[]> t) {
         double delta = this.getFitness() - t.getFitness();
         
-        return (int)(delta < 0 ? Math.min(delta, -1) : Math.max(delta, 1));
+        return (int)(delta < 0 ? -1 : delta > 0 ? 1 : 0);
     }
+
+    @Override
+    public String toString() {
+        int i = (getGeneCount() - 1) % 8;
+        String ret = "[";
+        for(int j = 0; j < this.chromosome.length ; j++){
+            for(; i >= 0; i--){
+                ret = ret.concat(((this.chromosome[j].byteValue() >> i) & 0x01) == 0x01 ? "1, " : "0, ");
+            }
+            
+            i = 7;
+        }
+        
+        return ret.concat("]").replace(", ]", "]");
+    }
+    
+    
     
 }

@@ -33,6 +33,10 @@ public class Pool {
         
         for(int k = 0; k < pool.length; k++){
             pool[k] = (Chromosome) ChromossomeClass.getConstructor(Session.class).newInstance(session);
+            
+            if(this.session.getInfactibilityTreatment() != 'p'){
+                pool[k].repair();
+            }
         }
     }
     
@@ -53,6 +57,9 @@ public class Pool {
             
             session.getRoulette().tryMutation(children[k]);
             session.getRoulette().tryMutation(children[k+1]);
+            
+            children[k].updateFitness();
+            children[k+1].updateFitness();
         }
         
         Arrays.parallelSort(children);
