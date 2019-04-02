@@ -27,9 +27,8 @@ public class Roulette {
         double choice = rng.nextDouble();
         
         double agregated = 0.0;
-        
         for(Chromosome ind : pool){
-            agregated += ind.getFitness() / totalFitness;
+            agregated += (ind.getFitness() / totalFitness) ;
             
             if(agregated > 1.001){
                 break;
@@ -60,8 +59,8 @@ public class Roulette {
         double choice = rng.nextDouble();
         
         if(!(crossOverChance > choice) || parent1.equals(parent2)){
-            childs[0] = parent1;
-            childs[1] = parent2;
+            childs[0] = parent1.generateChild(parent1, 0, 0);
+            childs[1] = parent2.generateChild(parent2, 0, 0);
         }else{
             int pos1 = rng.nextInt(parent1.getGeneCount());
             int pos2 = rng.nextInt(parent1.getGeneCount());

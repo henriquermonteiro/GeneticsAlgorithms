@@ -63,6 +63,7 @@ public class Session<T> {
     }
     
     public synchronized void countFitnessCalculation(){
+//    public void countFitnessCalculation(){
         fitnessCalc++;
     }
     

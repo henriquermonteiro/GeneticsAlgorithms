@@ -59,7 +59,7 @@ public abstract class BinaryChromossome extends Chromosome<Byte[]>{
         
         mask = (byte) (mask << (7 - shift));
         
-        this.chromosome[pos] = (byte) (this.chromosome[pos] ^ mask);
+        this.chromosome[pos] = (byte) (this.chromosome[pos].byteValue() ^ mask);
     }
 
     @Override
@@ -75,28 +75,30 @@ public abstract class BinaryChromossome extends Chromosome<Byte[]>{
         
         Byte[] parent2 = otherParent.getChromosome();
         
+        int offset = (8 - (getGeneCount() % 8) % 8);
+        
         for(int k = 0; k < child.length; k++){
-            int byteBegin = k * 8;
+            int byteBegin = (k * 8) - offset;
             int byteEnd = byteBegin + 7;
             
-            if(start < byteEnd || end > byteBegin){
-                child[k] = this.chromosome[k];
-            }else if(start < byteBegin){
-                int shift = (byteBegin) - start;
-                byte p1 = (byte) ((this.chromosome[k] >>> shift) << shift);
-                shift = 8 - shift;
+            if(start < byteEnd || end < byteBegin){
+                child[k] = this.chromosome[k].byteValue();
+            }else if(start > byteBegin){
+                int shift = start - (byteBegin);
                 byte p2 = (byte) ((parent2[k] << shift) >>> shift);
+                shift = 8 - shift;
+                byte p1 = (byte) ((this.chromosome[k].byteValue() >>> shift) << shift);
                 
                 child[k] = (byte) (p1 | p2);
-            }else if(end > byteEnd){
-                int shift = end - (byteEnd);
-                byte p2 = (byte) ((this.chromosome[k] << shift) >>> shift);
-                shift = 8 - shift;
+            }else if(end < byteEnd){
+                int shift = (byteEnd) - end;
                 byte p1 = (byte) ((parent2[k] >>> shift) << shift);
+                shift = 8 - shift;
+                byte p2 = (byte) ((this.chromosome[k].byteValue() << shift) >>> shift);
                 
                 child[k] = (byte) (p1 | p2);
             }else{
-                child[k] = parent2[k];
+                child[k] = parent2[k].byteValue();
             }
         }
         

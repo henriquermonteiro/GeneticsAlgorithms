@@ -49,6 +49,7 @@ public class Pool {
             poolTotalFitness += individual.getFitness();
         }
         
+        
         for(int k = 0; k < children.length; k += 2){
             Chromosome[] childs = session.getRoulette().tryCrossOver(pool, poolTotalFitness);
             

@@ -16,7 +16,7 @@ public class BackPackBinaryChromossome extends BinaryChromossome{
     private static final double[] weights = {3, 8, 12, 2, 8, 4, 4, 5, 1, 1, 8, 6, 4, 3, 3, 5, 7, 3, 5, 7, 4, 3, 7, 2, 3, 5, 4, 3,  7, 19, 20, 21, 11, 24, 13, 17, 18,  6, 15, 25, 12, 19};
     private static final double capacity = 120;
     
-    private double weight = 0.0;
+    private double weight;
 
     public BackPackBinaryChromossome(Session session) {
         super(session);
@@ -56,11 +56,11 @@ public class BackPackBinaryChromossome extends BinaryChromossome{
     protected void calculateFitness() {
         axCalculateFitness();
         
-        if(weight > 120){
+        if(weight > capacity){
             switch (session.getInfactibilityTreatment()) {
                 case 'e': // eliminate
                     if(this.session.getPool() != null){
-                        fitness = 0.0;
+                        this.fitness = 0.0;
                         break;
                     }
                 case 'r': // repair
@@ -68,8 +68,8 @@ public class BackPackBinaryChromossome extends BinaryChromossome{
                     axCalculateFitness();
                     break;
                 case 'p': // punish
-                    double punishment = (Math.max(weight - 120, 0));
-                    punishment /= 120;
+                    double punishment = (Math.max(this.weight - capacity, 0));
+                    punishment /= capacity;
                     punishment = Math.sqrt(punishment);
                     fitness *= 1-punishment;
                     break;
@@ -120,13 +120,15 @@ public class BackPackBinaryChromossome extends BinaryChromossome{
             if(lastBit)
                 wgt += weights[(getGeneCount() - 1) - k];
             
-            if(wgt > capacity)
-                return false;
+//            if(wgt > capacity)
+//                return false;
             
             buffer = (byte) (buffer >>> 1);
         }
         
-        return true;
+        this.weight = wgt;
+        
+        return wgt <= capacity;
     }
 
     @Override
