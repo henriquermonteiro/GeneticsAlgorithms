@@ -52,7 +52,7 @@ public abstract class BinaryChromossome extends Chromosome<Byte[]>{
             return;
         }
         
-        int pos = (int)((gene + (7 - (getGeneCount() % 8))) / 8);
+        int pos = (int)((gene + (8 - (getGeneCount() % 8))) / 8);
         int shift = (gene + (8 - (getGeneCount() % 8))) % 8;
         
         byte mask = 0x01;
@@ -123,7 +123,7 @@ public abstract class BinaryChromossome extends Chromosome<Byte[]>{
         String ret = "[";
         for(int j = 0; j < this.chromosome.length ; j++){
             for(; i >= 0; i--){
-                ret = ret.concat(((this.chromosome[j].byteValue() >> i) & 0x01) == 0x01 ? "1, " : "0, ");
+                ret = ret.concat(((this.chromosome[j].byteValue() >> i) & 0x01) == 0x01 ? "1" : "0");
             }
             
             i = 7;

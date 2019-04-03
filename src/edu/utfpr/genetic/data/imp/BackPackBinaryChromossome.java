@@ -30,9 +30,14 @@ public class BackPackBinaryChromossome extends BinaryChromossome{
     public int getGeneCount() {
         return 42;
     }
+
+    public double getWeight() {
+        return weight;
+    }
     
     private void axCalculateFitness(){
         this.fitness = 0.0;
+        this.weight = 0.0;
         
         byte buffer = 0;
         int pos = this.chromosome.length;
@@ -65,13 +70,13 @@ public class BackPackBinaryChromossome extends BinaryChromossome{
                     }
                 case 'r': // repair
                     repair();
-                    axCalculateFitness();
+                    //axCalculateFitness();
                     break;
                 case 'p': // punish
                     double punishment = (Math.max(this.weight - capacity, 0));
                     punishment /= capacity;
                     punishment = Math.sqrt(punishment);
-                    fitness *= 1-punishment;
+                    fitness *= Math.max(1-punishment, 0);
                     break;
                 default:
                     break;
@@ -91,12 +96,14 @@ public class BackPackBinaryChromossome extends BinaryChromossome{
             
             int count1 = 0;
             
-            for(int k = encoding.length() - 1; k > 0; k--){
+            for(int k = encoding.length() - 1; k >= 0; k--){
                 if(encoding.charAt(k) == '1'){
                     count1++;
                     
                     if(count1 == remove){
                         this.applyMutation(k);
+                        this.fitness -= values[k];
+                        this.weight -= weights[k];
                         break;
                     }
                 }
@@ -106,29 +113,32 @@ public class BackPackBinaryChromossome extends BinaryChromossome{
 
     @Override
     public boolean evaluateValidity() {
-        double wgt = 0.0;
+//        double wgt = 0.0;
+//        
+//        byte buffer = 0;
+//        int pos = this.chromosome.length;
+//        for(int k = 0; k < getGeneCount(); k++){
+//            if(k % 8 == 0){
+//                pos--;
+//                buffer = this.chromosome[pos];
+//            }
+//            
+//            boolean lastBit = (buffer & 0x01) == 0x01;
+//            if(lastBit)
+//                wgt += weights[(getGeneCount() - 1) - k];
+//            
+////            if(wgt > capacity)
+////                return false;
+//            
+//            buffer = (byte) (buffer >>> 1);
+//        }
+//        
+//        if(weight != wgt)
+//            System.out.println("STOP!!");
+//        
+//        this.weight = wgt;
         
-        byte buffer = 0;
-        int pos = this.chromosome.length;
-        for(int k = 0; k < getGeneCount(); k++){
-            if(k % 8 == 0){
-                pos--;
-                buffer = this.chromosome[pos];
-            }
-            
-            boolean lastBit = (buffer & 0x01) == 0x01;
-            if(lastBit)
-                wgt += weights[(getGeneCount() - 1) - k];
-            
-//            if(wgt > capacity)
-//                return false;
-            
-            buffer = (byte) (buffer >>> 1);
-        }
-        
-        this.weight = wgt;
-        
-        return wgt <= capacity;
+        return weight <= capacity;
     }
 
     @Override

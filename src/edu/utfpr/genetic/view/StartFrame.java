@@ -193,7 +193,8 @@ public class StartFrame extends Application implements SessionListener{
     
     private void runGA(){
         try {
-            currentSession = new Session<Byte[]>(16350543086l, 0.05, 0.8, 50, 50, BackPackBinaryChromossome.class, 'I', 200, 'r');
+//            currentSession = new Session<Byte[]>(16350543086l, 0.05, 0.8, 50, 50, BackPackBinaryChromossome.class, 'I', 500, 'r');
+            currentSession = new Session<Byte[]>(1636845245286l, 0.05, 0.3, 300, 300, BackPackBinaryChromossome.class, 'I', 500, 'r');
             currentSession.addSessionListner(this);
             Platform.runLater(() -> {
                 currentSession.execute();

@@ -5,6 +5,7 @@
  */
 package edu.utfpr.genetic.data;
 
+import edu.utfpr.genetic.data.imp.BackPackBinaryChromossome;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -18,10 +19,11 @@ public class IterationDigest<T> {
     private final Double bestFitness;
     private final Double averageFitness;
     private final Double standardDeviation;
+    private final Double weight;
     private final long generationID;
     private final Calendar logTime;
     
-    private boolean debug = true;
+    private boolean debug = false;
 
     public IterationDigest(Pool pool) {
         logTime = GregorianCalendar.getInstance();
@@ -41,6 +43,11 @@ public class IterationDigest<T> {
         
         chromossome = (T) best.getChromosome();
         bestFitness = best.getFitness();
+        if(best instanceof BackPackBinaryChromossome){
+            weight = ((BackPackBinaryChromossome)best).getWeight();
+        }else{
+            weight = Double.NaN;
+        }
         averageFitness = avgFitness / pool.getPool().length;
         
         double stdDeviation = 0.0;
@@ -58,6 +65,14 @@ public class IterationDigest<T> {
 
     public T getChromossome() {
         return chromossome;
+    }
+    
+    public double getBestWeight(){
+        return weight;
+    }
+
+    public String getChromossomeString() {
+        return chromossomeString;
     }
 
     public Double getBestFitness() {
